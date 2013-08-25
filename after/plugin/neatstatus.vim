@@ -11,6 +11,8 @@
 " " Original available here:
 " http://winterdom.com/2007/06/vimstatusline
 
+" Warreq moved stuff around
+
 set ls=2 " Always show status line
 let g:last_mode=""
 
@@ -19,7 +21,7 @@ let g:last_mode=""
 
 if !exists('g:NeatStatusLine_color_normal')
     " Black on Green
-    let g:NeatStatusLine_color_normal    = 'guifg=#000000 guibg=#7dcc7d gui=NONE ctermfg=0 ctermbg=2 cterm=NONE'
+    let g:NeatStatusLine_color_normal    = 'guifg=#000000 guibg=#7dcc7d gui=NONE ctermfg=0 ctermbg=2 cterm=bold'
 endif
 
 if !exists('g:NeatStatusLine_color_insert')
@@ -34,7 +36,7 @@ endif
 
 if !exists('g:NeatStatusLine_color_visual')
     " White on Purple
-    let g:NeatStatusLine_color_visual='guifg=#ffffff guibg=#810085 gui=NONE ctermfg=15 ctermbg=53 cterm=NONE'
+    let g:NeatStatusLine_color_visual='guifg=#ffffff guibg=#810085 gui=NONE ctermfg=15 ctermbg=53 cterm=bold'
 endif
 
 if !exists('g:NeatStatusLine_color_position')
@@ -44,7 +46,7 @@ endif
 
 if !exists('g:NeatStatusLine_color_modified')
     " White on Pink
-    let g:NeatStatusLine_color_modified='guifg=#ffffff guibg=#ff00ff ctermfg=15 ctermbg=5'
+    let g:NeatStatusLine_color_modified='guifg=#ffffff guibg=#ff00ff ctermfg=5 ctermbg=244'
 endif
 
 if !exists('g:NeatStatusLine_color_line')
@@ -57,10 +59,15 @@ if !exists('g:NeatStatusLine_color_filetype')
     let g:NeatStatusLine_color_filetype='guifg=#000000 guibg=#00ffff gui=bold ctermfg=0 ctermbg=51 cterm=bold'
 endif
 
-if !exists('g:NeatStatusLine_separator')
-    let g:NeatStatusLine_separator = '|'
-endif
+if !exists('g:NeatStatusLine_color_bg')
+    " Black on Cyan
+    let g:NeatStatusLine_color_bg='guifg=#000000 guibg=#00ffff gui=bold ctermfg=0 ctermbg=244 cterm=none'
+endif 
 
+if !exists('g:NeatStatusLine_separator')
+    let g:NeatStatusLine_separator = '╽'
+endif
+                                      " ❚▒
 "==============================================================================
 "==============================================================================
 
@@ -76,6 +83,7 @@ function! SetNeatstatusColorscheme()
     exec 'hi User6 '.g:NeatStatusLine_color_modified
     exec 'hi User7 '.g:NeatStatusLine_color_line
     exec 'hi User8 '.g:NeatStatusLine_color_filetype
+    exec 'hi User9 '.g:NeatStatusLine_color_bg
 
 endfunc
 
@@ -162,58 +170,34 @@ if has('statusline')
     " &modified         whether or not file was modified
     "
     function! SetStatusLineStyle()
-
-        " Determine the name of the session or terminal
-        if (strlen(v:servername)>0)
-            " If running a GUI vim with servername, then use that
-            let g:neatstatus_session = v:servername
-        elseif !has('gui_running')
-            " If running CLI vim say TMUX or use the terminal name.
-            if (exists("$TMUX"))
-                let g:neatstatus_session = 'tmux'
-            else
-                " Giving preference to color-term because that might be more
-                " meaningful in graphical environments. Eg. my $TERM is
-                " usually screen256-color 90% of the time.
-                let g:neatstatus_session = exists("$COLORTERM") ? $COLORTERM : $TERM
-            endif
-        else
-            " idk, my bff jill
-            let g:neatstatus_session = '?'
-        endif
         
         let &stl=""
+        
+
         " mode (changes color)
-        let &stl.="%1*\ %{Mode()} %0*".g:NeatStatusLine_separator 
-        " session name
-        let &stl.="%5* %{g:neatstatus_session} %0*".g:NeatStatusLine_separator
+        let &stl.="%1*\ %{Mode()} %9*" 
+        
+        " buffer number
+        let &stl.="  %-3.3n".g:NeatStatusLine_separator." "    
+        
         " file path
-        let &stl.=" %<%F "
+        let &stl.="%<%f ".g:NeatStatusLine_separator." "
         " read only, modified, modifiable flags in brackets
-        let &stl.="%([%R%M]%) "
-
-        " right-aligh everything past this point
-        let &stl.="%= "
-
+        let &stl.="%6* %([%R%M]%) "
+        
+        " right-align everything past this point
+        let &stl.="%9* %= "
+     
         " readonly flag
         let &stl.="%(%{(&ro!=0?'(readonly)':'')} ".g:NeatStatusLine_separator." %)"
 
         " file type (eg. python, ruby, etc..)
-        let &stl.="%8*%( %{&filetype} %)%0*".g:NeatStatusLine_separator." "
-        " file format (eg. unix, dos, etc..)
-        let &stl.="%{&fileformat} ".g:NeatStatusLine_separator." "
+        let &stl.="%8*%( %{&filetype} %)%9*".g:NeatStatusLine_separator." "
         " file encoding (eg. utf8, latin1, etc..)
         let &stl.="%(%{(&fenc!=''?&fenc:&enc)} ".g:NeatStatusLine_separator." %)"
-        " buffer number
-        let &stl.="BUF #%n ".g:NeatStatusLine_separator 
-        "line number (pink) / total lines
-        let &stl.="%5* LN %7*%l%5*/%L\ %0*".g:NeatStatusLine_separator." "
-        " percentage done
-        let &stl.="(%p%%) ".g:NeatStatusLine_separator." "
-        " column number
-        let &stl.="COL %c%V ".g:NeatStatusLine_separator
-        " modified / unmodified (purple)
-        let &stl.="%(%6* %{&modified ? 'modified':''} %)"
+        
+        "line number (pink) / total lines / column / percentage
+        let &stl.="%5* %7*%3.3l%5*/%L\ %-3.3c\ %<[%P]" 
 
     endfunc
 
