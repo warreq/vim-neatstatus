@@ -10,8 +10,181 @@
 " Loosely based on a script by Tomas Restrepo (winterdom.com)
 " " Original available here:
 " http://winterdom.com/2007/06/vimstatusline
+      
+" Warreq moved stuff around, brought in solarized palette
+"
+"}}}
+" Solarized Stuff
+" ----------------------------------------------------------------------------
+if (has("gui_running") && g:solarized_degrade == 0)
+    let s:vmode       = "gui"
+    let s:base03      = "#002b36"
+    let s:base02      = "#073642"
+    let s:base01      = "#586e75"
+    let s:base00      = "#657b83"
+    let s:base0       = "#839496"
+    let s:base1       = "#93a1a1"
+    let s:base2       = "#eee8d5"
+    let s:base3       = "#fdf6e3"
+    let s:yellow      = "#b58900"
+    let s:orange      = "#cb4b16"
+    let s:red         = "#dc322f"
+    let s:magenta     = "#d33682"
+    let s:violet      = "#6c71c4"
+    let s:blue        = "#268bd2"
+    let s:cyan        = "#2aa198"
+    let s:green       = "#719e07" "experimental
+elseif g:solarized_termcolors != 256 && &t_Co >= 16
+    let s:vmode       = "cterm"
+    let s:base03      = "8"
+    let s:base02      = "0"
+    let s:base01      = "10"
+    let s:base00      = "11"
+    let s:base0       = "12"
+    let s:base1       = "14"
+    let s:base2       = "7"
+    let s:base3       = "15"
+    let s:yellow      = "3"
+    let s:orange      = "9"
+    let s:red         = "1"
+    let s:magenta     = "5"
+    let s:violet      = "13"
+    let s:blue        = "4"
+    let s:cyan        = "6"
+    let s:green       = "2"
+elseif g:solarized_termcolors == 256
+    let s:vmode       = "cterm"
+    let s:base03      = "234"
+    let s:base02      = "235"
+    let s:base01      = "239"
+    let s:base00      = "240"
+    let s:base0       = "244"
+    let s:base1       = "245"
+    let s:base2       = "187"
+    let s:base3       = "230"
+    let s:yellow      = "136"
+    let s:orange      = "166"
+    let s:red         = "124"
+    let s:magenta     = "125"
+    let s:violet      = "61"
+    let s:blue        = "33"
+    let s:cyan        = "37"
+    let s:green       = "64"
+else
+    let s:vmode       = "cterm"
+    let s:bright      = "* term=bold cterm=bold"
+    let s:base03      = "DarkGray"      " 0*
+    let s:base02      = "Black"         " 0
+    let s:base01      = "LightGreen"    " 2*
+    let s:base00      = "LightYellow"   " 3*
+    let s:base0       = "LightBlue"     " 4*
+    let s:base1       = "LightCyan"     " 6*
+    let s:base2       = "LightGray"     " 7
+    let s:base3       = "White"         " 7*
+    let s:yellow      = "DarkYellow"    " 3
+    let s:orange      = "LightRed"      " 1*
+    let s:red         = "DarkRed"       " 1
+    let s:magenta     = "DarkMagenta"   " 5
+    let s:violet      = "LightMagenta"  " 5*
+    let s:blue        = "DarkBlue"      " 4
+    let s:cyan        = "DarkCyan"      " 6
+    let s:green       = "DarkGreen"     " 2
 
-" Warreq moved stuff around
+endif
+
+    let s:none            = "NONE"
+    let s:none            = "NONE"
+    let s:t_none          = "NONE"
+    let s:n               = "NONE"
+    let s:c               = ",undercurl"
+    let s:r               = ",reverse"
+    let s:s               = ",standout"
+    let s:ou              = ""
+    let s:ob              = ""
+
+" Background value based on termtrans setting "{{{
+" ---------------------------------------------------------------------
+if (has("gui_running") || g:solarized_termtrans == 0)
+    let s:back        = s:base03
+else
+    let s:back        = "NONE"
+endif
+"}}}
+" Alternate light scheme "{{{
+" ---------------------------------------------------------------------
+if &background == "light"
+    let s:temp03      = s:base03
+    let s:temp02      = s:base02
+    let s:temp01      = s:base01
+    let s:temp00      = s:base00
+    let s:base03      = s:base3
+    let s:base02      = s:base2
+    let s:base01      = s:base1
+    let s:base00      = s:base0
+    let s:base0       = s:temp00
+    let s:base1       = s:temp01
+    let s:base2       = s:temp02
+    let s:base3       = s:temp03
+    if (s:back != "NONE")
+        let s:back    = s:base03
+    endif
+endif
+"}}}
+" Optional contrast schemes "{{{
+" ---------------------------------------------------------------------
+if g:solarized_contrast == "high"
+    let s:base01      = s:base00
+    let s:base00      = s:base0
+    let s:base0       = s:base1
+    let s:base1       = s:base2
+    let s:base2       = s:base3
+    let s:back        = s:back
+endif
+if g:solarized_contrast == "low"
+    let s:back        = s:base02
+    let s:ou          = ",underline"
+endif
+
+exe "let s:bg_none      = ' ".s:vmode."bg=".s:none   ."'"
+exe "let s:bg_back      = ' ".s:vmode."bg=".s:back   ."'"
+exe "let s:bg_base03    = ' ".s:vmode."bg=".s:base03 ."'"
+exe "let s:bg_base02    = ' ".s:vmode."bg=".s:base02 ."'"
+exe "let s:bg_base01    = ' ".s:vmode."bg=".s:base01 ."'"
+exe "let s:bg_base00    = ' ".s:vmode."bg=".s:base00 ."'"
+exe "let s:bg_base0     = ' ".s:vmode."bg=".s:base0  ."'"
+exe "let s:bg_base1     = ' ".s:vmode."bg=".s:base1  ."'"
+exe "let s:bg_base2     = ' ".s:vmode."bg=".s:base2  ."'"
+exe "let s:bg_base3     = ' ".s:vmode."bg=".s:base3  ."'"
+exe "let s:bg_green     = ' ".s:vmode."bg=".s:green  ."'"
+exe "let s:bg_yellow    = ' ".s:vmode."bg=".s:yellow ."'"
+exe "let s:bg_orange    = ' ".s:vmode."bg=".s:orange ."'"
+exe "let s:bg_red       = ' ".s:vmode."bg=".s:red    ."'"
+exe "let s:bg_magenta   = ' ".s:vmode."bg=".s:magenta."'"
+exe "let s:bg_violet    = ' ".s:vmode."bg=".s:violet ."'"
+exe "let s:bg_blue      = ' ".s:vmode."bg=".s:blue   ."'"
+exe "let s:bg_cyan      = ' ".s:vmode."bg=".s:cyan   ."'"
+
+exe "let s:fg_none      = ' ".s:vmode."fg=".s:none   ."'"
+exe "let s:fg_back      = ' ".s:vmode."fg=".s:back   ."'"
+exe "let s:fg_base03    = ' ".s:vmode."fg=".s:base03 ."'"
+exe "let s:fg_base02    = ' ".s:vmode."fg=".s:base02 ."'"
+exe "let s:fg_base01    = ' ".s:vmode."fg=".s:base01 ."'"
+exe "let s:fg_base00    = ' ".s:vmode."fg=".s:base00 ."'"
+exe "let s:fg_base0     = ' ".s:vmode."fg=".s:base0  ."'"
+exe "let s:fg_base1     = ' ".s:vmode."fg=".s:base1  ."'"
+exe "let s:fg_base2     = ' ".s:vmode."fg=".s:base2  ."'"
+exe "let s:fg_base3     = ' ".s:vmode."fg=".s:base3  ."'"
+exe "let s:fg_green     = ' ".s:vmode."fg=".s:green  ."'"
+exe "let s:fg_yellow    = ' ".s:vmode."fg=".s:yellow ."'"
+exe "let s:fg_orange    = ' ".s:vmode."fg=".s:orange ."'"
+exe "let s:fg_red       = ' ".s:vmode."fg=".s:red    ."'"
+exe "let s:fg_magenta   = ' ".s:vmode."fg=".s:magenta."'"
+exe "let s:fg_violet    = ' ".s:vmode."fg=".s:violet ."'"
+exe "let s:fg_blue      = ' ".s:vmode."fg=".s:blue   ."'"
+exe "let s:fg_cyan      = ' ".s:vmode."fg=".s:cyan   ."'"
+ 
+" ----------------------------------------------------------------------------
+
 
 set ls=2 " Always show status line
 let g:last_mode=""
@@ -20,54 +193,53 @@ let g:last_mode=""
 " You can redefine these in your .vimrc
 
 if !exists('g:NeatStatusLine_color_normal')
-    " Black on Green
-    let g:NeatStatusLine_color_normal    = 'guifg=#000000 guibg=#7dcc7d gui=NONE ctermfg=0 ctermbg=2 cterm=bold'
+    "Green
+    let g:NeatStatusLine_color_normal     = s:bg_green." ".s:fg_back." "."gui=bold "."cterm=bold"
 endif
 
 if !exists('g:NeatStatusLine_color_insert')
-    " White on Red
-    let g:NeatStatusLine_color_insert    = 'guifg=#ffffff guibg=#ff0000 gui=bold ctermfg=15 ctermbg=9 cterm=bold'
+    "Red
+    let g:NeatStatusLine_color_insert     = s:bg_red." ".s:fg_back." "."gui=bold "."cterm=bold"
 endif
 
 if !exists('g:NeatStatusLine_color_replace')
-    " Yellow on Blue
-    let g:NeatStatusLine_color_replace='guifg=#ffff00 guibg=#5b7fbb gui=bold ctermfg=190 ctermbg=67 cterm=bold'
+    "Blue
+    let g:NeatStatusLine_color_replace    = s:bg_blue." ".s:fg_back." "."gui=bold "."cterm=bold"
 endif
 
 if !exists('g:NeatStatusLine_color_visual')
-    " White on Purple
-    let g:NeatStatusLine_color_visual='guifg=#ffffff guibg=#810085 gui=NONE ctermfg=15 ctermbg=53 cterm=bold'
+    "Purple
+    let g:NeatStatusLine_color_visual     = s:bg_violet." ".s:fg_back." "."gui=bold "."cterm=bold"
 endif
 
 if !exists('g:NeatStatusLine_color_position')
-    " White on Black
-    let g:NeatStatusLine_color_position='guifg=#ffffff guibg=#000000 ctermfg=15 ctermbg=0'
+    "BG but with bold
+    let g:NeatStatusLine_color_position=s:bg_base0." ".s:fg_back." "."gui=bold "."cterm=bold"
 endif
 
-if !exists('g:NeatStatusLine_color_modified')
-    " White on Pink
-    let g:NeatStatusLine_color_modified='guifg=#ffffff guibg=#ff00ff ctermfg=5 ctermbg=244'
+if !exists('g:NeatStatusLine_color_fugitive')
+    "Green
+    let g:NeatStatusLine_color_fugitive= s:bg_back." ".s:fg_green." "."gui=bold "."cterm=NONE"  
 endif
 
 if !exists('g:NeatStatusLine_color_line')
-    " Pink on Black
-    let g:NeatStatusLine_color_line='guifg=#ff00ff guibg=#000000 gui=bold ctermfg=207 ctermbg=0 cterm=bold'
+    "Red 
+    let g:NeatStatusLine_color_line= s:bg_base0." ".s:fg_green. " "."gui=bold "."cterm=bold"  
 endif
 
-if !exists('g:NeatStatusLine_color_filetype')
-    " Black on Cyan
-    let g:NeatStatusLine_color_filetype='guifg=#000000 guibg=#00ffff gui=bold ctermfg=0 ctermbg=51 cterm=bold'
+if !exists('g:NeatStatusLine_color_bg_invert')
+    "
+    let g:NeatStatusLine_color_bg_invert= s:bg_back." ".s:fg_base0. " "."gui=NONE "."cterm=NONE" 
 endif
 
 if !exists('g:NeatStatusLine_color_bg')
-    " Black on Cyan
-    let g:NeatStatusLine_color_bg='guifg=#000000 guibg=#00ffff gui=bold ctermfg=0 ctermbg=244 cterm=none'
+    "
+    let g:NeatStatusLine_color_bg      = s:bg_base0." ".s:fg_back. " "."gui=NONE "."cterm=NONE"
 endif 
 
 if !exists('g:NeatStatusLine_separator')
-    let g:NeatStatusLine_separator = '╽'
+    let g:NeatStatusLine_separator = '╰╮'
 endif
-                                      " ❚▒
 "==============================================================================
 "==============================================================================
 
@@ -80,9 +252,9 @@ function! SetNeatstatusColorscheme()
     exec 'hi User3 '.g:NeatStatusLine_color_insert
     exec 'hi User4 '.g:NeatStatusLine_color_visual
     exec 'hi User5 '.g:NeatStatusLine_color_position
-    exec 'hi User6 '.g:NeatStatusLine_color_modified
+    exec 'hi User6 '.g:NeatStatusLine_color_fugitive
     exec 'hi User7 '.g:NeatStatusLine_color_line
-    exec 'hi User8 '.g:NeatStatusLine_color_filetype
+    exec 'hi User8 '.g:NeatStatusLine_color_bg_invert
     exec 'hi User9 '.g:NeatStatusLine_color_bg
 
 endfunc
@@ -175,29 +347,31 @@ if has('statusline')
         
 
         " mode (changes color)
-        let &stl.="%1*\ %{Mode()} %9*" 
-        
+        let &stl.="%1*\ %{Mode()} ░▒▓%8*  " 
+        "
+         " read only, modified, modifiable flags in brackets
+        let &stl.="%(%h%m%r%w%) " 
+
         " buffer number
-        let &stl.="  %-3.3n".g:NeatStatusLine_separator." "    
+        let &stl.="░▒▓%9* %-3.3n".g:NeatStatusLine_separator." "    
         
         " file path
         let &stl.="%<%f ".g:NeatStatusLine_separator." "
-        " read only, modified, modifiable flags in brackets
-        let &stl.="%6* %([%R%M]%) "
         
         " right-align everything past this point
-        let &stl.="%9* %= "
-     
-        " readonly flag
-        let &stl.="%(%{(&ro!=0?'(readonly)':'')} ".g:NeatStatusLine_separator." %)"
+        let &stl.="%8*▓▒░%= "
+                   " ↪↳☇➥
+        " fugitive status line
+        let &stl.="%6*↪ %{fugitive#statusline()} "
 
         " file type (eg. python, ruby, etc..)
-        let &stl.="%8*%( %{&filetype} %)%9*".g:NeatStatusLine_separator." "
+        let &stl.="%8*░▒▓%9* %(%{&filetype} %)".g:NeatStatusLine_separator." "
+        "
         " file encoding (eg. utf8, latin1, etc..)
-        let &stl.="%(%{(&fenc!=''?&fenc:&enc)} ".g:NeatStatusLine_separator." %)"
+        let &stl.="%(%{(&fenc!=''?&fenc:&enc)} ".g:NeatStatusLine_separator."%)"." " 
         
-        "line number (pink) / total lines / column / percentage
-        let &stl.="%5* %7*%3.3l%5*/%L\ %-3.3c\ %<[%P]" 
+        "line number (bold) / total lines / column / percentage
+        let &stl.="%5*%3.3l%9*/%L\ ".g:NeatStatusLine_separator." %-3.3c".g:NeatStatusLine_separator." %<[%P]" 
 
     endfunc
 
