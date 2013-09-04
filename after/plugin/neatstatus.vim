@@ -10,7 +10,7 @@
 " Loosely based on a script by Tomas Restrepo (winterdom.com)
 " " Original available here:
 " http://winterdom.com/2007/06/vimstatusline
-      
+"
 " Warreq moved stuff around, brought in solarized palette
 "
 "}}}
